@@ -54,6 +54,17 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
+# Configuration.
 .env
+.env.local
+.env.stage
+.env.live
 
+# Visual Studio Code.
+.vscode/**
+!.vscode/launch.json.example
+
+# Miscellaneous.
+.DS_Store
+TODO
+TODO.txt

@@ -1,0 +1,21 @@
+{
+  "name": "najdi-si-sms",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@3846masa/axios-cookiejar-support": "^0.3.2",
+    "axios": "^0.17.1",
+    "chalk": "^2.3.0",
+    "cheerio": "^1.0.0-rc.2",
+    "dotenv": "^4.0.0",
+    "joi": "^13.1.1",
+    "lodash": "^4.17.4",
+    "tough-cookie": "^2.3.3"
+  }
+}
