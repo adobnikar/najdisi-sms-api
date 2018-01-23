@@ -11,8 +11,9 @@ const querystring = require("querystring");
 const axios = require("axios");
 const axiosCookieJarSupport = require("@3846masa/axios-cookiejar-support").default;
 const tough = require("tough-cookie");
-
 const Joi = require("./libs/joi-ext");
+
+const isArray = require("lodash/isArray");
 
 // Logging functions.
 const log = console.log;
@@ -39,16 +40,52 @@ function createAxios() {
 	return instance;
 }
 
-function inputsToObj(inputs) {
+function formToObj(form) {
+	let inputs = form.find("input");
 	inputs = Array.from(inputs);
+
 	let dataObj = {};
 	for (let input of inputs) {
 		let type = input.attribs.type;
-		if (type === "submit") continue;
+		if (type === "submit") {
+			console.log(input.attribs);
+			continue;
+		}
 		let name = input.attribs.name;
 		let value = input.attribs.value || "";
-		dataObj[name] = value;
+		if (dataObj.hasOwnProperty(name)) {
+			if (!isArray(dataObj[name])) dataObj[name] = [dataObj[name]];
+			dataObj[name].push(value);
+		} else dataObj[name] = value;
 	}
+
+	let selects = form.find("select");
+	selects = Array.from(selects);
+	for (let select of selects) {
+		let name = select.attribs.name;
+		let value = "";
+		let options = Array.from(cheerio(select).find("option"));
+		let selectedOption = options.filter(o => ("selected" in o.attribs));
+		if (selectedOption.length > 0) value = selectedOption[0].attribs.value;
+
+		if (dataObj.hasOwnProperty(name)) {
+			if (!isArray(dataObj[name])) dataObj[name] = [dataObj[name]];
+			dataObj[name].push(value);
+		} else dataObj[name] = value;
+	}
+
+	let textareas = form.find("textarea");
+	textareas = Array.from(textareas);
+	for (let textarea of textareas) {
+		let name = textarea.attribs.name;
+		let value = "";
+
+		if (dataObj.hasOwnProperty(name)) {
+			if (!isArray(dataObj[name])) dataObj[name] = [dataObj[name]];
+			dataObj[name].push(value);
+		} else dataObj[name] = value;
+	}
+
 	return dataObj;
 }
 
@@ -64,19 +101,18 @@ async function login(axiosNajdiSi, username, password) {
 	let $ = cheerio.load(response.data);
 	let form = $("form#jsecLoginForm");
 	if (form.length < 1) throw new Error("Login form not found.");
-	let inputs = form.find("input");
-	let loginData = inputsToObj(inputs);
+	let formData = formToObj(form);
 
 	// Validate the login form.
-	loginData = Joi.validate(loginData, Joi.object().keys({
+	formData = Joi.validate(formData, Joi.object().keys({
 		jsecLogin: Joi.string().allow("").required(),
 		jsecPassword: Joi.string().allow("").required(),
 		jsecRememberMe: Joi.string().allow("").required(),
-		"t:formdata": Joi.string().required(),
+		// "t:formdata": Joi.string().required(),
 	}));
-	loginData.jsecLogin = username;
-	loginData.jsecPassword = password;
-	loginData.jsecRememberMe = "on";
+	formData.jsecLogin = username;
+	formData.jsecPassword = password;
+	formData.jsecRememberMe = "on";
 
 	// Validate form action.
 	let formAttrs = Joi.validate(form[0].attribs, Joi.object().keys({
@@ -85,37 +121,59 @@ async function login(axiosNajdiSi, username, password) {
 	}));
 
 	// Login.
-	response = await axiosNajdiSi.post(formAttrs.action, querystring.stringify(loginData));
+	response = await axiosNajdiSi.post(formAttrs.action, querystring.stringify(formData));
 
 	// TODO: extract some info from the site and return it
 	// $ = cheerio.load(response.data);
 	// let t = $("div#nav1 div.pull-right").text();
 }
 
-async function sendSms(axiosNajdiSi, recipientPhoneNumber, text) {
-
-}
-
-async function asyncWrapper() {
-	let axiosNajdiSi = createAxios();
-	await login(axiosNajdiSi, process.env.NAJDISI_USER, process.env.NAJDISI_PASSWORD);
-	
-
+async function sendSms(axiosNajdiSi, recipientAreaCode, recipientPhoneNumber, text) {
 	// Load send sms form.
 	let response = await axiosNajdiSi.get("/najdi/sms");
 	let $ = cheerio.load(response.data);
-	let loginForm = $("form#jsecLoginForm");
-	http://www.najdi.si/najdi/sms
+	let form = $("form#smsForm");
+	if (form.length < 1) throw new Error("SMS form not found.");
+	let formData = formToObj(form);
 
+	// Validate the send sms form.
+	formData = Joi.validate(formData, Joi.object().keys({
+		areaCodeRecipient: Joi.string().allow("").required(),
+		phoneNumberRecipient: Joi.string().allow("").required(),
+		text: Joi.string().allow("").required(),
+	}));
+	formData.areaCodeRecipient = recipientAreaCode;
+	formData.phoneNumberRecipient = recipientPhoneNumber;
+	formData.text = text;
 
-	// TODO: check if login succeded.
-	// Exmaple get the username or check if cookie was set
-	//
+	formData["t:submit"] = `["send","send"]`;
+	formData["t:zoneid"] = `smsZone`;
 
+	// Validate form action.
+	let formAttrs = Joi.validate(form[0].attribs, Joi.object().keys({
+		action: Joi.string().required(),
+		method: Joi.string().valid("post").required(),
+	}));
 
-	
-	
+	// Send sms.
+	response = await axiosNajdiSi.post(formAttrs.action, querystring.stringify(formData));
+
 	console.log(response);
+}
+
+async function asyncWrapper() {
+	// Validate settings.
+	Joi.validate(process.env, Joi.object().keys({
+		NAJDISI_USER: Joi.string().required(),
+		NAJDISI_PASSWORD: Joi.string().required(),
+		RECIPIENT_AREA_CODE: Joi.string().required(),
+		RECIPIENT_PHONE_NUMBER: Joi.string().required(),
+		SMS_TEXT: Joi.string().required(),
+	}));
+
+	let axiosNajdiSi = createAxios();
+	await login(axiosNajdiSi, process.env.NAJDISI_USER, process.env.NAJDISI_PASSWORD);
+	await sendSms(axiosNajdiSi, process.env.RECIPIENT_AREA_CODE, process.env.RECIPIENT_PHONE_NUMBER, process.env.SMS_TEXT);
 }
 
 asyncWrapper().then(error => {
