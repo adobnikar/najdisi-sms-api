@@ -4,7 +4,8 @@
   "description": "Send 40 free SMS per day with Najdi.si.",
   "main": "index.js",
   "files": [
-    "index.js"
+    "index.js",
+    "libs/joi-ext.js"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
