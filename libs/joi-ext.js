@@ -2,9 +2,18 @@
 
 const Joi = require("joi");
 
-const extend = require("lodash/extend");
+// Password and identifier settings.
+const settings = {
+	passwordMinLength: 6,
+	passwordMaxLength: 255,
+	passwordRegex: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/,
+	passwordErrorMessage: '"password" must contain an uppercase letter, lowercase letter and a number.',
 
-const settings = require("../config/joi-settings");
+	identifierMinLength: 3,
+	identifierMaxLength: 255,
+	identifierRegex: /^\d+$/,
+	identifierError: 'Identifier must only contain numbers.',
+};
 
 // Set a default error handler.
 Joi.originalValidateFn = Joi.validate;
@@ -13,7 +22,7 @@ Joi.validate = (data, schema, options) => {
 		allowUnknown: true,
 	};
 
-	options = extend(baseOptions, options);
+	options = Object.assign(baseOptions, options);
 	let {
 		error,
 		value,
@@ -31,9 +40,9 @@ Joi.password = () => {
     .regex(settings.passwordRegex, settings.passwordErrorMessage);
 };
 
-Joi.studentId = () => {
-	return Joi.string().min(settings.studentIdMinLength).max(settings.studentIdMaxLength)
-    .regex(settings.studentIdRegex, settings.studentIdError);
+Joi.identifier = () => {
+	return Joi.string().min(settings.identifierMinLength).max(settings.identifierMaxLength)
+    .regex(settings.identifierRegex, settings.identifierError);
 };
 
 /**

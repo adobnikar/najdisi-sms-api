@@ -1,1 +1,1 @@
-# najdisi-send-sms
+# najdisi-sms-api
