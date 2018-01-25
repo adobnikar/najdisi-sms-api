@@ -243,7 +243,13 @@ class NajdisiSmsApi {
 		this.axiosInstance = createAxios();
 	}
 
-	async login(username, password, rememberMe = true) {
+	/**
+	 * Log in.
+	 * 
+	 * @param {string} username Najdi.si account username.
+	 * @param {string} password Najdi.si account password.
+	 */
+	async login(username, password) {
 		// Validate parameters.
 		let p = Joi.validate({username, password, rememberMe}, Joi.object().keys({
 			username: Joi.string().allow("").required(),
@@ -257,6 +263,9 @@ class NajdisiSmsApi {
 		this.isLoggedIn = true;
 	}
 
+	/**
+	 * Get status.
+	 */
 	async getStatus() {
 		// Load send sms form.
 		let response = await this.axiosInstance.get("/najdi/sms");
@@ -266,18 +275,31 @@ class NajdisiSmsApi {
 		return status;
 	}
 
+	/**
+	 * Send sms.
+	 * 
+	 * @param {string} areaCodeRecipient Must have length of 3. Examples: "030", "070", "041", ...
+	 * @param {string} phoneNumberRecipient Must have length of 6. Example: "123456", ...
+	 * @param {string} smsText SMS text that you want to send. Max 160 characters.
+	 */
 	async sendSms(areaCodeRecipient, phoneNumberRecipient, smsText) {
 		// Validate parameters.
 		let p = Joi.validate({areaCodeRecipient, phoneNumberRecipient, smsText}, Joi.object().keys({
 			areaCodeRecipient: Joi.phoneNumber(3).required(),
 			phoneNumberRecipient: Joi.phoneNumber(6).required(),
-			smsText: Joi.string().allow("").required(),
+			smsText: Joi.string().max(160).allow("").required(),
 		}));
 		if (!this.isLoggedIn) throw new Error("Need to log in first.");
 		
 		await sendSmsHelper(this.axiosInstance, p.areaCodeRecipient, p.phoneNumberRecipient, p.smsText);
 	}
 
+	/**
+	 * Get status without creating an API instance.
+	 * 
+	 * @param {string} username Najdi.si account username.
+	 * @param {string} password Najdi.si account password.
+	 */
 	static async getStatusOnce(username, password) {
 		// Validate parameters.
 		let p = Joi.validate({username, password}, Joi.object().keys({
@@ -291,6 +313,15 @@ class NajdisiSmsApi {
 		return status;
 	}
 
+	/**
+	 * Send SMS without creating an API instance.
+	 * 
+	 * @param {string} username Najdi.si account username.
+	 * @param {string} password Najdi.si account password.
+	 * @param {string} areaCodeRecipient Must have length of 3. Examples: "030", "070", "041", ...
+	 * @param {string} phoneNumberRecipient Must have length of 6. Example: "123456", ...
+	 * @param {string} smsText SMS text that you want to send. Max 160 characters.
+	 */
 	static async sendSmsOnce(username, password, areaCodeRecipient, phoneNumberRecipient, smsText) {
 		// Validate parameters.
 		let p = Joi.validate({username, password, areaCodeRecipient, phoneNumberRecipient, smsText}, Joi.object().keys({
@@ -298,7 +329,7 @@ class NajdisiSmsApi {
 			password: Joi.string().allow("").required(),
 			areaCodeRecipient: Joi.phoneNumber(3).required(),
 			phoneNumberRecipient: Joi.phoneNumber(6).required(),
-			smsText: Joi.string().allow("").required(),
+			smsText: Joi.string().max(160).allow("").required(),
 		}));
 
 		let api = new NajdisiSmsApi();

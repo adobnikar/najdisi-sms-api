@@ -1,13 +1,31 @@
 {
-  "name": "najdi-si-sms",
+  "name": "najdisi-sms-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Send 40 free SMS per day with Najdi.si.",
   "main": "index.js",
+  "files": [
+    "index.js"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adobnikar/najdisi-sms-api.git"
+  },
+  "keywords": [
+    "Najdi.si",
+    "SMS",
+    "free",
+    "send",
+    "API"
+  ],
+  "author": "Andraž Dobnikar <andraz.dobnikar@hotmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adobnikar/najdisi-sms-api/issues"
+  },
+  "homepage": "https://github.com/adobnikar/najdisi-sms-api#readme",
   "dependencies": {
     "@3846masa/axios-cookiejar-support": "^0.3.2",
     "axios": "^0.17.1",

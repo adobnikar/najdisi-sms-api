@@ -20,7 +20,7 @@ async function asyncWrapper() {
 		NAJDISI_PASSWORD: Joi.string().required(),
 		RECIPIENT_AREA_CODE: Joi.phoneNumber(3).required(),
 		RECIPIENT_PHONE_NUMBER: Joi.phoneNumber(6).required(),
-		SMS_TEXT: Joi.string().required(),
+		SMS_TEXT: Joi.string().max(160).allow("").required(),
 	}));
 
 	let username = process.env.NAJDISI_USER;
@@ -31,7 +31,7 @@ async function asyncWrapper() {
 
 
 	let status = await NajdisiSmsApi.getStatusOnce(username, password);
-	log("status", status);
+	log("status", JSON.stringify(status, null, "\t"));
 
 	// Send sms.
 	await NajdisiSmsApi.sendSmsOnce(username, password, areaCodeRecipient, phoneNumberRecipient, smsText);
