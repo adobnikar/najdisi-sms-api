@@ -1,6 +1,6 @@
 {
   "name": "najdisi-sms-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Send 40 free SMS per day in Slovenia with Najdi.si.",
   "main": "index.js",
   "files": [
