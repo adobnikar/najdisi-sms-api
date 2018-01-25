@@ -82,7 +82,7 @@ fn();
 
 	```javascript
 	// Example status object:
-	let status = {
+	{
 		"isLoggedIn": true,
 		"name": "Name Surname",
 		"smsCount": 7,
@@ -106,7 +106,7 @@ fn();
 
 	```javascript
 	// Example status object:
-	let status = {
+	{
 		"isLoggedIn": true,
 		"name": "Name Surname",
 		"smsCount": 7,
