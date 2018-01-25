@@ -251,14 +251,13 @@ class NajdisiSmsApi {
 	 */
 	async login(username, password) {
 		// Validate parameters.
-		let p = Joi.validate({username, password, rememberMe}, Joi.object().keys({
+		let p = Joi.validate({username, password}, Joi.object().keys({
 			username: Joi.string().allow("").required(),
 			password: Joi.string().allow("").required(),
-			rememberMe: Joi.boolean().required(),
 		}));
 
 		this.isLoggedIn = false;
-		let status = await loginHelper(this.axiosInstance, p.username, p.password, p.rememberMe);
+		let status = await loginHelper(this.axiosInstance, p.username, p.password);
 		if (!status.isLoggedIn) throw new Error("Login failed.");
 		this.isLoggedIn = true;
 	}
@@ -308,7 +307,7 @@ class NajdisiSmsApi {
 		}));
 
 		let api = new NajdisiSmsApi();
-		await api.login(p.username, p.password, false);
+		await api.login(p.username, p.password);
 		let status = await api.getStatus();
 		return status;
 	}
@@ -333,7 +332,7 @@ class NajdisiSmsApi {
 		}));
 
 		let api = new NajdisiSmsApi();
-		await api.login(p.username, p.password, false);
+		await api.login(p.username, p.password);
 		let status = await api.sendSms(p.areaCodeRecipient, p.phoneNumberRecipient, p.smsText);
 		return status;
 	}
