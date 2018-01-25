@@ -2,17 +2,17 @@
 
 const Joi = require("joi");
 
-// Password and identifier settings.
+// Password and phone number settings.
 const settings = {
 	passwordMinLength: 6,
 	passwordMaxLength: 255,
 	passwordRegex: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/,
 	passwordErrorMessage: '"password" must contain an uppercase letter, lowercase letter and a number.',
 
-	identifierMinLength: 3,
-	identifierMaxLength: 255,
-	identifierRegex: /^\d+$/,
-	identifierError: 'Identifier must only contain numbers.',
+	phoneNumberMinLength: 6,
+	phoneNumberMaxLength: 6,
+	phoneNumberRegex: /^\d+$/,
+	phoneNumberError: 'Phone number must only contain numbers.',
 };
 
 // Set a default error handler.
@@ -37,12 +37,12 @@ Joi.validate = (data, schema, options) => {
 
 Joi.password = () => {
 	return Joi.string().min(settings.passwordMinLength).max(settings.passwordMaxLength)
-    .regex(settings.passwordRegex, settings.passwordErrorMessage);
+    	.regex(settings.passwordRegex, settings.passwordErrorMessage);
 };
 
-Joi.identifier = () => {
-	return Joi.string().min(settings.identifierMinLength).max(settings.identifierMaxLength)
-    .regex(settings.identifierRegex, settings.identifierError);
+Joi.phoneNumber = (length) => {
+	return Joi.string().min(length || settings.phoneNumberMinLength).max(length || settings.phoneNumberMaxLength)
+    	.regex(settings.phoneNumberRegex, settings.phoneNumberError);
 };
 
 /**

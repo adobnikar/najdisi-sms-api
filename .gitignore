@@ -59,6 +59,9 @@ typings/
 .env.local
 .env.stage
 .env.live
+.env.bkp
+.env.bkp2
+.env.bkp3
 
 # Visual Studio Code.
 .vscode/**
