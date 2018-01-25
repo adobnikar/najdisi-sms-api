@@ -5,6 +5,13 @@
 - requires **node v7.6.0** or higher for ES2015 and async function support,
 - you need to create an account on the [Najdi.si](https://www.najdi.si/) web portal.
 
+## Installation
+
+Run the npm install command:
+```bash
+npm i --save najdisi-sms-api
+```
+
 ## Quick send SMS example
 
 ```javascript
