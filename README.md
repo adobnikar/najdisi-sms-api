@@ -3,7 +3,8 @@
 ## Requirements
 
 - requires **node v7.6.0** or higher for ES2015 and async function support,
-- you need to create an account on the [Najdi.si](https://www.najdi.si/) web portal.
+- you need to create an account on the [Najdi.si](https://www.najdi.si/) web portal,
+- sender GSM phone number must be set and verified.
 
 ## Installation
 

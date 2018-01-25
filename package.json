@@ -1,7 +1,7 @@
 {
   "name": "najdisi-sms-api",
   "version": "1.0.0",
-  "description": "Send 40 free SMS per day with Najdi.si.",
+  "description": "Send 40 free SMS per day in Slovenia with Najdi.si.",
   "main": "index.js",
   "files": [
     "index.js",
@@ -19,7 +19,9 @@
     "SMS",
     "free",
     "send",
-    "API"
+    "API",
+    "Slovenia",
+    "Slovenija"
   ],
   "author": "Andraž Dobnikar <andraz.dobnikar@hotmail.com>",
   "license": "MIT",
