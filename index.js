@@ -202,6 +202,8 @@ async function sendSmsHelper(axiosInstance, areaCodeRecipient, phoneNumberRecipi
 	let status = extractStatus($);
 	if (status.isLoggedIn !== true) throw new Error("Need to log in.");
 	if (status.isSenderSet !== true) throw new Error("Sender phone number not set and verified.");
+	if (!(status.maxSmsCount > 0)) throw new Error("Could not get maxSmsCount from status.");
+	if (status.smsCount >= status.maxSmsCount) throw new Error(`Daily limit of ${status.maxSmsCount} SMS reached.`);
 	let {form, data, options} = formToObj($, "smsForm");
 
 	// Validate the send sms form.
